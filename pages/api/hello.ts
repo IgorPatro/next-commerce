@@ -13,29 +13,37 @@ const handler = async (req, res) => {
   const users = await prisma.user.findMany({
     include: {
       Cart: true,
+      EmailVerificationRequest: true,
+      PasswordVerificationRequest: true,
     },
   })
 
-  await prisma.user.create({
-    data: {
-      email: "i.patro@wp.pl",
-      passwordHash: await hashPassword("pass123"),
-      Cart: {
-        create: {
-          products: [
-            {
-              productId: "iddddd",
-              productPrice: 25,
-              productQuantity: 2,
-            },
-          ],
-          sum: 50,
-        },
-      },
+  const carts = await prisma.cart.findMany({
+    include: {
+      User: true,
     },
   })
 
-  res.status(200).json({ users })
+  // await prisma.user.create({
+  //   data: {
+  //     email: "i.patro@wp.pl",
+  //     passwordHash: await hashPassword("pass123"),
+  //     Cart: {
+  //       create: {
+  //         products: [
+  //           {
+  //             productId: "prod_4OANwRGnjkovYL",
+  //             productPrice: 14.99,
+  //             productQuantity: 2,
+  //           },
+  //         ],
+  //         sum: 29.98,
+  //       },
+  //     },
+  //   },
+  // })
+
+  res.status(200).json({ users, carts })
 }
 
 export default handler
